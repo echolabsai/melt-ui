@@ -204,7 +204,7 @@ export function createPopover(args?: CreatePopoverProps) {
 		returned: ([$isVisible, $contentId, $triggerId]) => {
 			return {
 				role: 'button',
-				'aria-haspopup': 'dialog',
+			         //'aria-haspopup': 'dialog',
 				'aria-expanded': $isVisible ? 'true' : 'false',
 				'data-state': stateAttr($isVisible),
 				'aria-controls': $contentId,
