@@ -903,7 +903,7 @@ export function createMenuBuilder(opts: _MenuBuilderOptions) {
 					'aria-expanded': $subOpen,
 					'data-state': $subOpen ? 'open' : 'closed',
 					'data-disabled': disabledAttr($disabled),
-					'aria-haspopop': 'menu',
+					'aria-haspopup': 'menu',
 				} as const;
 			},
 			action: (node: HTMLElement): MeltActionReturn<MenuEvents['subTrigger']> => {
