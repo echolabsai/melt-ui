@@ -106,7 +106,7 @@ export function createDialog(props?: CreateDialogProps) {
 		returned: ([$open]) => {
 			return {
 				'aria-haspopup': 'dialog',
-				'aria-expanded': $open,
+			        //'aria-expanded': $open,
 				type: 'button',
 			} as const;
 		},
