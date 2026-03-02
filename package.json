@@ -6,7 +6,7 @@
 	"author": "Thomas G. Lopes",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run package",
+		"build": "npm run package",
 		"deploy": "vite build",
 		"prepare": "svelte-kit sync",
 		"preview": "vite preview",

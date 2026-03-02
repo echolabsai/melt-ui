@@ -7,6 +7,7 @@ import {
 	overridable,
 	styleToString,
 	toWritableStores,
+	generateIds,
 } from '$lib/internal/helpers/index.js';
 import type { MeltActionReturn } from '$lib/internal/types.js';
 import { derived, writable } from 'svelte/store';
@@ -19,6 +20,9 @@ const defaults = {
 	forceVisible: false,
 } satisfies CreateCollapsibleProps;
 
+export const collapsibleIdParts = ['content'] as const;
+export type CollapsibleIdParts = typeof collapsibleIdParts;
+
 const { name } = createElHelpers('collapsible');
 
 export function createCollapsible(props?: CreateCollapsibleProps) {
@@ -30,6 +34,11 @@ export function createCollapsible(props?: CreateCollapsibleProps) {
 	const openWritable = withDefaults.open ?? writable(withDefaults.defaultOpen);
 	const open = overridable(openWritable, withDefaults?.onOpenChange);
 
+	const ids = toWritableStores({
+		...generateIds(collapsibleIdParts),
+		...withDefaults.ids,
+	});
+
 	const root = makeElement(name(), {
 		stores: [open, disabled],
 		returned: ([$open, $disabled]) =>
@@ -40,12 +49,14 @@ export function createCollapsible(props?: CreateCollapsibleProps) {
 	});
 
 	const trigger = makeElement(name('trigger'), {
-		stores: [open, disabled],
-		returned: ([$open, $disabled]) =>
+		stores: [open, disabled, ids.content],
+		returned: ([$open, $disabled, $contentId]) =>
 			({
 				'data-state': $open ? 'open' : 'closed',
 				'data-disabled': disabledAttr($disabled),
 				disabled: disabledAttr($disabled),
+				'aria-expanded': $open ? 'true' : 'false',
+				'aria-controls': $contentId,
 			} as const),
 		action: (node: HTMLElement): MeltActionReturn<CollapsibleEvents['trigger']> => {
 			const unsub = addMeltEventListener(node, 'click', () => {
@@ -66,12 +77,13 @@ export function createCollapsible(props?: CreateCollapsibleProps) {
 	);
 
 	const content = makeElement(name('content'), {
-		stores: [isVisible, open, disabled],
-		returned: ([$isVisible, $open, $disabled]) =>
+		stores: [isVisible, open, disabled, ids.content],
+		returned: ([$isVisible, $open, $disabled, $contentId]) =>
 			({
 				'data-state': $open ? 'open' : 'closed',
 				'data-disabled': disabledAttr($disabled),
 				hidden: $isVisible ? undefined : true,
+			  id: $contentId,
 				style: $isVisible ? undefined : styleToString({ display: 'none' }),
 			} as const),
 	});
